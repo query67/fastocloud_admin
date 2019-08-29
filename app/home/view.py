@@ -33,7 +33,8 @@ def post_login(form: SigninForm):
         flash_error(form.errors)
         return render_template('home/login.html', form=form)
 
-    check_user = ProviderUser.objects(email=form.email.data).first()
+    email = form.email.data.lower()
+    check_user = ProviderUser.objects(email=email).first()
     if not check_user:
         flash_error(gettext(u'User not found.'))
         return render_template('home/login.html', form=form)
