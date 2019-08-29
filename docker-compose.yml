@@ -5,12 +5,12 @@ services:
         container_name: mongodb
         ports:
             - 27017:27017
-    iptv_admin:
+    fastocloud_admin:
         build:
             context: ./
             dockerfile: Dockerfile
-        image: iptv_admin
-        container_name: iptv_admin
+        image: fastocloud_admin
+        container_name: fastocloud_admin
         depends_on:
             - mongodb
         command: ./server.py
@@ -28,7 +28,7 @@ services:
         image: nginx
         container_name: nginx
         depends_on:
-            - iptv_admin
+            - fastocloud_admin
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf
         ports:
