@@ -18,7 +18,7 @@ Admin panel for ![FastoCloud](https://github.com/fastogt/fastocloud) IPTV part
 `pip3 install -r requirements.txt`
 
 ### Docker
-[Docker](https://hub.docker.com/r/fastogt/iptv_admin)
+[Docker](https://hub.docker.com/r/fastogt/fastocloud_admin)
 
 ### Test server
 [FastoCloud](https://fastocloud.com)
