@@ -259,7 +259,7 @@ class ServiceManager(IClientHandler):
     def get_user_connections_by_email(self, email) -> list:
         connections = []
         for user in self._subscribers:
-            if user.info.email == email:
+            if user.info and user.info.email == email:
                 connections.append(user)
 
         return connections
