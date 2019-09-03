@@ -187,12 +187,7 @@ class ServiceManager(IClientHandler):
             client.activate_fail(cid, 'User invalid password')
             return
 
-        found_device = None
-        for device in check_user.devices:
-            if device.id == device_id:
-                found_device = device
-                break
-
+        found_device = check_user.find_device(device_id)
         if not found_device:
             client.activate_fail(cid, 'Device not found')
             return
