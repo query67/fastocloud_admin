@@ -167,14 +167,12 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                             {% trans %}Providers{% endtrans %}
                         </a>
                     </div>
-                    {% if (config['SUBSCRIBERS_SUPPORT']) %}
                     <div class="col-md-1">
                         <a href="{{ url_for('ServiceView:subscribers', sid=service.id) }}" class="btn btn-success"
                            role="button">
                             {% trans %}Subscribers{% endtrans %}
                         </a>
                     </div>
-                    {% endif %}
                     {% if (role == 2) %}
                     <div class="col-md-1">
                         <a href="{{ url_for('ServiceView:get_log') }}" role="button"
