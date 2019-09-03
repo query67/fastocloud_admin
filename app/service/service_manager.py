@@ -10,6 +10,13 @@ from gevent import socket
 from gevent import select
 
 
+def check_is_auth_client(client) -> bool:
+    if not client:
+        return False
+
+    return client.is_active()
+
+
 class ServiceManager(IClientHandler):
     SUBSCRIBER_PORT = 6000
     BANDWIDTH_PORT = 5000
@@ -104,12 +111,7 @@ class ServiceManager(IClientHandler):
     def on_client_state_changed(self, client, status: ClientStatus):
         pass
 
-    # protected
-    def _check_is_auth_client(self, client) -> bool:
-        if not client:
-            return False
-
-        return client.is_active()
+        # protected
 
     def _handle_server_ping_command(self, client, resp: Response):
         pass
@@ -155,7 +157,7 @@ class ServiceManager(IClientHandler):
         client.device = found_device
 
     def _handle_get_server_info(self, client, cid: str, params: dict):
-        if not self._check_is_auth_client(client):
+        if not check_is_auth_client(client):
             client.check_activate_fail(cid, 'User not active')
             client.disconnect()
             return
@@ -166,15 +168,16 @@ class ServiceManager(IClientHandler):
         pass
 
     def _handle_get_channels(self, client, cid: str, params: dict):
-        if not self._check_is_auth_client(client):
+        if not check_is_auth_client(client):
             client.check_activate_fail(cid, 'User not active')
             client.disconnect()
             return
 
-        client.get_channels_success(cid)
+        channels = client.info.get_streams()
+        client.get_channels_success(cid, channels)
 
     def _handle_get_runtime_channel_info(self, client, cid: str, params: dict):
-        if not self._check_is_auth_client(client):
+        if not check_is_auth_client(client):
             client.check_activate_fail(cid, 'User not active')
             client.disconnect()
             return
