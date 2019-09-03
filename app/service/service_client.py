@@ -1,9 +1,9 @@
 from bson.objectid import ObjectId
 
-from pyfastocloud.fastocloud_client import FastoCloudClient, Fields
+from pyfastocloud.fastocloud_client import FastoCloudClient, Fields, Commands
 from pyfastocloud.client_handler import IClientHandler
 from pyfastocloud.json_rpc import Request, Response
-from pyfastocloud.client_constants import Commands, ClientStatus
+from pyfastocloud.client_constants import ClientStatus
 
 from app.service.stream_handler import IStreamHandler
 import app.common.constants as constants
@@ -58,9 +58,13 @@ class ServiceClient(IClientHandler):
     def socket(self):
         return self._client.socket()
 
-    def recv_data(self):
+    def recv_data(self) -> bool:
         data = self._client.read_command()
+        if not data:
+            return False
+
         self._client.process_commands(data)
+        return True
 
     def status(self) -> ClientStatus:
         return self._client.status()
@@ -72,7 +76,7 @@ class ServiceClient(IClientHandler):
         return self._client.activate(self._gen_request_id(), license_key)
 
     def ping_service(self):
-        return self._client.ping_service(self._gen_request_id())
+        return self._client.ping(self._gen_request_id())
 
     def stop_service(self, delay: int):
         return self._client.stop_service(self._gen_request_id(), delay)
@@ -107,12 +111,7 @@ class ServiceClient(IClientHandler):
             stream.set_server_settings(settings)
             streams.append(stream.config())
 
-        subscribers = []
-        for subs in settings.subscribers:
-            conf = subs.to_service(settings)
-            subscribers.append(conf)
-
-        return self._client.sync_service(self._gen_request_id(), streams, subscribers)
+        return self._client.sync_service(self._gen_request_id(), streams)
 
     def prepare_service(self, settings):
         if not settings:
@@ -152,7 +151,7 @@ class ServiceClient(IClientHandler):
         return self._version
 
     # handler
-    def process_response(self, req: Request, resp: Response):
+    def process_response(self, client, req: Request, resp: Response):
         if not req:
             return
 
@@ -175,7 +174,7 @@ class ServiceClient(IClientHandler):
                     self._vods_in = directory[Fields.VODS_IN_DIRECTORY]['content']
                     break
 
-    def process_request(self, req: Request):
+    def process_request(self, client, req: Request):
         if not req:
             return
 
@@ -193,7 +192,7 @@ class ServiceClient(IClientHandler):
         elif req.method == Commands.CLIENT_PING_COMMAND:
             self._handler.on_ping_received(req.params)
 
-    def on_client_state_changed(self, status: ClientStatus):
+    def on_client_state_changed(self, client, status: ClientStatus):
         if status != ClientStatus.ACTIVE:
             self._set_runtime_fields()
         if self._handler:
