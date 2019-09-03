@@ -1,7 +1,8 @@
 from app.common.service.entry import ServiceSettings
 from app.service.service import Service
 from app.common.subscriber.entry import Subscriber, Device
-from pyfastocloud.subscriber_client import SubscriberClient, Commands, make_utc_timestamp
+from pyfastocloud.subscriber_client import SubscriberClient, Commands
+from pyfastocloud.client import make_utc_timestamp
 from pyfastocloud.client_handler import IClientHandler, Request, Response, ClientStatus
 
 from gevent import socket
