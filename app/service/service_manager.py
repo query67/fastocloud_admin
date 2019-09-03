@@ -16,6 +16,7 @@ class SubscriberConnection(SubscriberClient):
         self._current_stream_id = str()
         self._device = None
         self._last_ping_ts = make_utc_timestamp() / 1000
+        self._request_id = 0
 
     @property
     def info(self) -> Subscriber:
@@ -56,6 +57,11 @@ class SubscriberConnection(SubscriberClient):
 
         self.process_commands(data)
         return True
+
+    def gen_request_id(self) -> int:
+        current_value = self._request_id
+        self._request_id += 1
+        return current_value
 
 
 class ServiceManager(IClientHandler):
@@ -123,7 +129,7 @@ class ServiceManager(IClientHandler):
 
             for client in self._subscribers:
                 if ts_sec - client.last_ping_ts > ServiceManager.PING_SUBSCRIBERS_SEC:
-                    client.ping()
+                    client.ping(client.gen_request_id())
                     client.last_ping_ts = ts_sec
 
     def process_response(self, client, req: Request, resp: Response):
@@ -216,7 +222,7 @@ class ServiceManager(IClientHandler):
             client.disconnect()
             return
 
-        client.pong()
+        client.pong(cid)
 
     def _handle_get_channels(self, client, cid: str, params: dict):
         if not self._check_is_auth_client(client):
