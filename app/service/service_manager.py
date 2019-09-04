@@ -2,6 +2,7 @@ from app.common.service.entry import ServiceSettings
 from app.service.service import Service
 from app.service.subscriber_client import SubscriberConnection
 from app.common.subscriber.entry import Subscriber
+from app.common.constants import PlayerMessage
 from pyfastocloud.subscriber_client import Commands
 from pyfastocloud.client import make_utc_timestamp
 from pyfastocloud.client_handler import IClientHandler, Request, Response, ClientStatus
@@ -213,7 +214,7 @@ class ServiceManager(IClientHandler):
 
         return connections
 
-    def send_message(self, email: str, message: str, ttl: int):
+    def send_message(self, email: str, message: PlayerMessage):
         for user in self._subscribers:
             if user.info and user.info.email == email:
-                user.send_message(user.gen_request_id(), message, ttl * 1000)
+                user.send_message(user.gen_request_id(), message.message, message.type, message.ttl * 1000)

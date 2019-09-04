@@ -277,7 +277,7 @@ class ServiceView(FlaskView):
         subscriber = Subscriber.objects(id=sid).first()
         form = MessageForm()
         if request.method == 'POST' and form.validate_on_submit():
-            servers_manager.send_message(subscriber.email, form.message.data, form.ttl.data)
+            servers_manager.send_message(subscriber.email, form.get_data())
             return jsonify(status='ok'), 200
 
         return render_template('service/subscriber/send_message.html', form=form)
