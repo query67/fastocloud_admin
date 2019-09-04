@@ -216,4 +216,4 @@ class ServiceManager(IClientHandler):
     def send_message(self, email: str, message: str, ttl: int):
         for user in self._subscribers:
             if user.info and user.info.email == email:
-                user.send_message(message, ttl * 1000)
+                user.send_message(user.gen_request_id(), message, ttl * 1000)
