@@ -212,3 +212,8 @@ class ServiceManager(IClientHandler):
                 connections.append(user)
 
         return connections
+
+    def send_message(self, email: str, message: str, ttl: int):
+        for user in self._subscribers:
+            if user.info and user.info.email == email:
+                user.send_message(message, ttl * 1000)

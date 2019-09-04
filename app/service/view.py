@@ -4,9 +4,9 @@ from flask_classy import FlaskView, route
 from flask import render_template, redirect, url_for, request, jsonify, Response
 from flask_login import login_required, current_user
 
-from app import get_runtime_folder
+from app import get_runtime_folder, servers_manager
 from app.common.service.forms import ServiceSettingsForm, ActivateForm, UploadM3uForm, ServerProviderForm
-from app.common.subscriber.forms import SignupForm
+from app.common.subscriber.forms import SignupForm, MessageForm
 from app.common.service.entry import ServiceSettings, ProviderPair
 from app.common.subscriber.entry import Subscriber
 from app.common.utils.m3u_parser import M3uParser
@@ -270,6 +270,17 @@ class ServiceView(FlaskView):
             return jsonify(status='ok'), 200
 
         return jsonify(status='failed'), 404
+
+    @login_required
+    @route('/subscriber/send_message/<sid>', methods=['GET', 'POST'])
+    def subscriber_send_message(self, sid):
+        subscriber = Subscriber.objects(id=sid).first()
+        form = MessageForm()
+        if request.method == 'POST' and form.validate_on_submit():
+            servers_manager.send_message(subscriber.email, form.message.data, form.ttl.data)
+            return jsonify(status='ok'), 200
+
+        return render_template('service/subscriber/send_message.html', form=form)
 
     @login_required
     @route('/add', methods=['GET', 'POST'])
