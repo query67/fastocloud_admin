@@ -52,8 +52,7 @@ class SubscriberConnection(SubscriberClient):
         self.process_commands(data)
         return True
 
-    # private
-    def _gen_request_id(self) -> int:
+    def gen_request_id(self) -> int:
         current_value = self._request_id
         self._request_id += 1
         return current_value

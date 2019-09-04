@@ -82,7 +82,7 @@ class ServiceManager(IClientHandler):
 
             for client in self._subscribers:
                 if ts_sec - client.last_ping_ts > ServiceManager.PING_SUBSCRIBERS_SEC:
-                    #client.ping()
+                    client.ping(client.gen_request_id())
                     client.last_ping_ts = ts_sec
 
     def process_response(self, client, req: Request, resp: Response):
