@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     argv = parser.parse_args()
 
-    logging.basicConfig(filename=argv.logs_path, filemode='a', level=logging.DEBUG,
+    logging.basicConfig(filename=argv.logs_path, level=logging.DEBUG,
                         format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', datefmt='%H:%M:%S')
 
     http_server = WSGIServer((argv.host, argv.port), app)
