@@ -1,5 +1,4 @@
 import logging
-import socket
 
 from app.service.service_manager import ServiceManager
 
@@ -25,7 +24,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     def __init__(self, host: str, port: int, socketio):
         super(SubscribersServiceManager, self).__init__(host, port, socketio)
-        serversock = gsocket.Socket(socket.AF_INET, socket.SOCK_STREAM)
+        serversock = gsocket.create_tcp_socket()
         serversock.bind((host, SubscribersServiceManager.SUBSCRIBER_PORT))
         serversock.listen(10)
         self._subscribers_server_socket = serversock
