@@ -4,6 +4,7 @@ from pyfastocloud.fastocloud_client import FastoCloudClient, Fields, Commands
 from pyfastocloud.client_handler import IClientHandler
 from pyfastocloud.json_rpc import Request, Response
 from pyfastocloud.client_constants import ClientStatus
+import pyfastocloud.socket.gevent as gsocket
 
 from app.service.stream_handler import IStreamHandler
 import app.common.constants as constants
@@ -44,7 +45,7 @@ class ServiceClient(IClientHandler):
         self.id = sid
         self._request_id = 0
         self._handler = handler
-        self._client = FastoCloudClient(host, port, self)
+        self._client = FastoCloudClient(host, port, self, gsocket)
         self._set_runtime_fields()
 
     def connect(self):
@@ -192,10 +193,7 @@ class ServiceClient(IClientHandler):
             self._handler.on_client_state_changed(status)
 
     # private
-    def _set_runtime_fields(self, http_host=None, vods_host=None, cods_host=None,
-                            version=None,
-                            os=None,
-                            vods_in=None):
+    def _set_runtime_fields(self, http_host=None, vods_host=None, cods_host=None, version=None, os=None, vods_in=None):
         self._http_host = http_host
         self._vods_host = vods_host
         self._cods_host = cods_host

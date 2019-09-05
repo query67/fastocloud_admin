@@ -1,3 +1,6 @@
+import logging
+import socket
+
 from app.service.service_manager import ServiceManager
 
 from app.service.subscriber_client import SubscriberConnection
@@ -6,17 +9,12 @@ from app.common.constants import PlayerMessage
 from pyfastocloud.subscriber_client import Commands
 from pyfastocloud.client import make_utc_timestamp
 from pyfastocloud.client_handler import IClientHandler, Request, Response, ClientStatus
-
-from gevent import socket
-from gevent import select
-
-import logging
+import pyfastocloud.socket.gevent as gsocket
 
 
 def check_is_auth_client(client) -> bool:
     if not client:
         return False
-
     return client.is_active()
 
 
@@ -27,7 +25,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     def __init__(self, host: str, port: int, socketio):
         super(SubscribersServiceManager, self).__init__(host, port, socketio)
-        serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        serversock = gsocket.Socket(socket.AF_INET, socket.SOCK_STREAM)
         serversock.bind((host, SubscribersServiceManager.SUBSCRIBER_PORT))
         serversock.listen(10)
         self._subscribers_server_socket = serversock
@@ -47,7 +45,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                 if server.is_connected():
                     rsockets.append(server.socket())
 
-            readable, writeable, _ = select.select(rsockets, [], [], 1)
+            readable, writeable, _ = gsocket.Select(rsockets, [], [], 1)
             ts_sec = make_utc_timestamp() / 1000
             for read in readable:
                 # income subscriber connection

@@ -1,11 +1,12 @@
 from app.common.subscriber.entry import Subscriber, Device
 from pyfastocloud.subscriber_client import SubscriberClient
 from pyfastocloud.client import make_utc_timestamp
+import pyfastocloud.socket.gevent as gsocket
 
 
 class SubscriberConnection(SubscriberClient):
     def __init__(self, sock, addr, handler):
-        super(SubscriberConnection, self).__init__(sock, addr, handler)
+        super(SubscriberConnection, self).__init__(sock, addr, handler, gsocket)
         self._info = None
         self._current_stream_id = str()
         self._device = None
