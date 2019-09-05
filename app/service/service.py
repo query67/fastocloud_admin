@@ -105,7 +105,7 @@ class Service(IStreamHandler):
         return self._client.activate(license_key)
 
     def sync(self, prepare=False):
-        settings = self._settings.reload()
+        settings = self._settings
         if prepare:
             self._client.prepare_service(settings)
         return self._client.sync_service(settings)
