@@ -215,11 +215,11 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     def __add_maybe_subscriber(self, subs: SubscriberConnection):
         self._subscribers.append(subs)
-        print('New connection address: {0}, connections: {1}', subs.address(), len(self._subscribers))
+        print('New connection address: {0}, connections: {1}'.format(subs.address(), len(self._subscribers)))
 
     def __activate_subscriber(self, subs: SubscriberConnection):
-        print('Welcome registered user: {0}, connections: {1}', subs.info.email, len(self._subscribers))
+        print('Welcome registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
 
     def __remove_subscriber(self, subs: SubscriberConnection):
         self._subscribers.remove(subs)
-        print('Bye registered user: {0}, connections: {1}', subs.info.email, len(self._subscribers))
+        print('Bye registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
