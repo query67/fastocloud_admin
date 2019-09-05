@@ -10,6 +10,7 @@ from flask_socketio import SocketIO
 from werkzeug.contrib.fixers import ProxyFix
 
 from app.service.service_manager import ServiceManager
+from app.service.subscribers_service_manager import SubscribersServiceManager
 
 
 def get_app_folder():
@@ -67,7 +68,10 @@ def init_project(static_folder, *args):
 
     host = sn_host or _host
     port = int(sn_port or _port)
-    servers_manager = ServiceManager(host, port, socketio)
+    support_subscribers = app.config.get('SUBSCRIBERS_SUPPORT')
+    servers_manager = SubscribersServiceManager(host, port, socketio) if support_subscribers else ServiceManager(host,
+                                                                                                                 port,
+                                                                                                                 socketio)
 
     return app, bootstrap, babel, db, mail, login_manager, servers_manager
 
