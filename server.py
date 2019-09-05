@@ -21,7 +21,7 @@ if __name__ == '__main__':
     argv = parser.parse_args()
 
     import logging
-    logging.basicConfig(filename='admin.log', filemode='w', level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', datefmt='%H:%M:%S')
+    logging.basicConfig(filename='admin.log', level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', datefmt='%H:%M:%S')
 
     http_server = WSGIServer((argv.host, argv.port), app)
     srv_greenlet = gevent.spawn(http_server.serve_forever)
