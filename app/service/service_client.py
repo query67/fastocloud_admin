@@ -171,12 +171,16 @@ class ServiceClient(IClientHandler):
             return
 
         if req.method == Commands.STATISTIC_STREAM_COMMAND:
+            assert req.is_notification()
             self._handler.on_stream_statistic_received(req.params)
         elif req.method == Commands.CHANGED_STREAM_COMMAND:
+            assert req.is_notification()
             self._handler.on_stream_sources_changed(req.params)
         elif req.method == Commands.STATISTIC_SERVICE_COMMAND:
+            assert req.is_notification()
             self._handler.on_service_statistic_received(req.params)
         elif req.method == Commands.QUIT_STATUS_STREAM_COMMAND:
+            assert req.is_notification()
             self._handler.on_quit_status_stream(req.params)
         elif req.method == Commands.CLIENT_PING_COMMAND:
             self._handler.on_ping_received(req.params)
