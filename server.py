@@ -20,6 +20,9 @@ if __name__ == '__main__':
     parser.add_argument('--host', help='host (default: {0})'.format(HOST), default=HOST)
     argv = parser.parse_args()
 
+    import logging
+    logging.basicConfig(filename='admin.log', filemode='w', level=logging.DEBUG, format='%(asctime)s.%(msecs)03d [%(levelname)s] %(message)s', datefmt='%H:%M:%S')
+
     http_server = WSGIServer((argv.host, argv.port), app)
     srv_greenlet = gevent.spawn(http_server.serve_forever)
     alarm_greenlet = gevent.spawn(servers_refresh)

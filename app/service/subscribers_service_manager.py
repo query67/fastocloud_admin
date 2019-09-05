@@ -10,6 +10,8 @@ from pyfastocloud.client_handler import IClientHandler, Request, Response, Clien
 from gevent import socket
 from gevent import select
 
+import logging
+
 
 def check_is_auth_client(client) -> bool:
     if not client:
@@ -215,11 +217,15 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     def __add_maybe_subscriber(self, subs: SubscriberConnection):
         self._subscribers.append(subs)
-        print('New connection address: {0}, connections: {1}'.format(subs.address(), len(self._subscribers)))
+        logging.info('New connection address: {0}, connections: {1}'.format(subs.address(), len(self._subscribers)))
 
     def __activate_subscriber(self, subs: SubscriberConnection):
-        print('Welcome registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
+        logging.info('Welcome registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
 
     def __remove_subscriber(self, subs: SubscriberConnection):
         self._subscribers.remove(subs)
-        print('Bye registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
+        if subs.info:
+            logging.info('Bye registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
+        else:
+            logging.info(
+                'Closed connection address: {0}, connections: {1}'.format(subs.address(), len(self._subscribers)))
