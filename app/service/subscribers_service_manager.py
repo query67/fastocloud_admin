@@ -31,6 +31,10 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         self._subscribers_server_socket = serversock
         self._subscribers = []
 
+    def stop(self):
+        super(SubscribersServiceManager, self).stop()
+        self._subscribers_server_socket.close()
+
     def refresh(self):
         while not self._stop_listen:
             rsockets = []
@@ -100,7 +104,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
     def on_client_state_changed(self, client, status: ClientStatus):
         pass
 
-        # protected
+    # protected
 
     def _handle_server_ping_command(self, client, resp: Response):
         pass
@@ -210,6 +214,8 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     def __add_subscriber(self, subs: SubscriberConnection):
         self._subscribers.append(subs)
+        print('Welcome registered user: {0}, connections: {1}', subs.info.email, len(self._subscribers))
 
     def __remove_subscriber(self, subs: SubscriberConnection):
         self._subscribers.remove(subs)
+        print('Bye registered user: {0}, connections: {1}', subs.info.email, len(self._subscribers))
