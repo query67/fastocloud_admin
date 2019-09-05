@@ -52,7 +52,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                 if self._subscribers_server_socket == read:
                     csock, addr = read.accept()
                     subs = SubscriberConnection(csock, addr, self)
-                    self.__add_subscriber(subs)
+                    self.__add_maybe_subscriber(subs)
                     continue
 
                 # subscriber read
@@ -148,6 +148,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         client.activate_success(cid)
         client.info = check_user
         client.device = found_device
+        self.__activate_subscriber(client)
         return True
 
     def _handle_get_server_info(self, client, cid: str, params: dict) -> bool:
@@ -212,8 +213,11 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         self.__remove_subscriber(subs)
         subs.disconnect()
 
-    def __add_subscriber(self, subs: SubscriberConnection):
+    def __add_maybe_subscriber(self, subs: SubscriberConnection):
         self._subscribers.append(subs)
+        print('New connection address: {0}, connections: {1}', subs.address(), len(self._subscribers))
+
+    def __activate_subscriber(self, subs: SubscriberConnection):
         print('Welcome registered user: {0}, connections: {1}', subs.info.email, len(self._subscribers))
 
     def __remove_subscriber(self, subs: SubscriberConnection):
