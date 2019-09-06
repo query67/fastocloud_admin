@@ -45,7 +45,6 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                     rsockets.append(server.socket())
 
             readable, writeable, _ = gsocket.Select(rsockets, [], [], 1)
-            ts_sec = make_utc_timestamp() / 1000
             for read in readable:
                 # income subscriber connection
                 if self._subscribers_server_socket == read:
@@ -67,11 +66,16 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                         server.recv_data()
                         break
 
-            for client in self._subscribers:
+            ts_sec = make_utc_timestamp() / 1000
+            copy_subsc = list(self._subscribers)
+            for client in copy_subsc:
                 if ts_sec - client.last_ping_ts > SubscribersServiceManager.PING_SUBSCRIBERS_SEC:
                     if client.is_active():
-                        client.ping(client.gen_request_id())
-                        client.last_ping_ts = ts_sec
+                        result = client.ping(client.gen_request_id())
+                        if result:
+                            client.last_ping_ts = ts_sec
+                        else:
+                            self.__close_subscriber(client)
 
     def process_response(self, client, req: Request, resp: Response):
         if req.method == Commands.SERVER_PING_COMMAND:
@@ -144,7 +148,9 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                 client.activate_fail(cid, 'Device in use')
                 return False
 
-        client.activate_success(cid)
+        result = client.activate_success(cid)
+        if not result:
+            return False
         client.info = check_user
         client.device = found_device
         self.__activate_subscriber(client)
@@ -155,16 +161,15 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             client.check_activate_fail(cid, 'User not active')
             return False
 
-        client.get_server_info_success(cid, '{0}:{1}'.format(self._host, SubscribersServiceManager.BANDWIDTH_PORT))
-        return True
+        return client.get_server_info_success(cid,
+                                              '{0}:{1}'.format(self._host, SubscribersServiceManager.BANDWIDTH_PORT))
 
     def _handle_client_ping(self, client, cid: str, params: dict) -> bool:
         if not check_is_auth_client(client):
             client.check_activate_fail(cid, 'User not active')
             return False
 
-        client.pong(cid)
-        return True
+        return client.pong(cid)
 
     def _handle_get_channels(self, client, cid: str, params: dict) -> bool:
         if not check_is_auth_client(client):
@@ -172,8 +177,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             return False
 
         channels = client.info.get_streams()
-        client.get_channels_success(cid, channels)
-        return True
+        return client.get_channels_success(cid, channels)
 
     def _handle_get_runtime_channel_info(self, client, cid: str, params: dict) -> bool:
         if not check_is_auth_client(client):
@@ -183,8 +187,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         sid = params['id']
         watchers = self.get_watchers_by_stream_id(sid)
         client.current_stream_id = sid
-        client.get_runtime_channel_info_success(cid, sid, watchers)
-        return True
+        return client.get_runtime_channel_info_success(cid, sid, watchers)
 
     def get_watchers_by_stream_id(self, sid: str):
         total = 0
