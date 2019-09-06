@@ -14,13 +14,13 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
             width: 18%;
         }
         th.stream_type {
-            width: 6%;
+            width: 5%;
         }
         th.stream_status {
             width: 5%;
         }
         th.stream_restarts {
-            width: 5%;
+            width: 4%;
         }
         th.stream_cpu {
             width: 5%;
@@ -40,11 +40,14 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
         th.stream_live_time {
             width: 5%;
         }
+        th.stream_quality {
+            width: 5%;
+        }
         th.stream_price {
             width: 5%;
         }
         th.stream_actions {
-            width: 28%;
+            width: 25%;
         }
 </style>
 {{super()}}
@@ -292,6 +295,7 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         <th class="stream_outbps">{% trans %}Out (Mbps){% endtrans %}</th>
                                         <th class="stream_work_time">{% trans %}TTL (sec){% endtrans %}</th>
                                         <th class="stream_live_time">{% trans %}RTL (sec){% endtrans %}</th>
+                                        <th class="stream_quality">{% trans %}Quality (%){% endtrans %}</th>
                                         <th class="stream_price">{% trans %}Price ($){% endtrans %}</th>
                                         <th class="stream_actions">{% trans %}Actions{% endtrans %}</th>
                                     </tr>
@@ -325,6 +329,8 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         </td>
                                         <td>{{ (rev.timestamp - rev.start_time)/1000 }}</td>
                                         <td>{{ (rev.timestamp - rev.loop_start_time)/1000 }}</td>
+                                        <td>{{ rev.quality | round(2, 'floor') }}
+                                        </td>
                                         <td>{{ rev.price }}</td>
                                         <td>
                                             <button type="submit"
@@ -443,6 +449,7 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         <th class="stream_outbps">{% trans %}Out (Mbps){% endtrans %}</th>
                                         <th class="stream_work_time">{% trans %}TTL (sec){% endtrans %}</th>
                                         <th class="stream_live_time">{% trans %}RTL (sec){% endtrans %}</th>
+                                        <th class="stream_quality">{% trans %}Quality (%){% endtrans %}</th>
                                         <th class="stream_price">{% trans %}Price ($){% endtrans %}</th>
                                         <th class="stream_actions">{% trans %}Actions{% endtrans %}</th>
                                     </tr>
@@ -476,6 +483,7 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         </td>
                                         <td>{{ (vod.timestamp - vod.start_time)/1000 }}</td>
                                         <td>{{ (vod.timestamp - vod.loop_start_time)/1000 }}</td>
+                                        <td>{{ vod.quality | round(2, 'floor') }}</td>
                                         <td>{{ vod.price }}</td>
                                         <td>
                                             <button type="submit"
@@ -546,6 +554,7 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         <th class="stream_outbps">{% trans %}Out (Mbps){% endtrans %}</th>
                                         <th class="stream_work_time">{% trans %}TTL (sec){% endtrans %}</th>
                                         <th class="stream_live_time">{% trans %}RTL (sec){% endtrans %}</th>
+                                        <th class="stream_quality">{% trans %}Quality (%){% endtrans %}</th>
                                         <th class="stream_price">{% trans %}Price ($){% endtrans %}</th>
                                         <th class="stream_actions">{% trans %}Actions{% endtrans %}</th>
                                     </tr>
@@ -579,6 +588,7 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
                                         </td>
                                         <td>{{ (cod.timestamp - cod.start_time)/1000 }}</td>
                                         <td>{{ (cod.timestamp - cod.loop_start_time)/1000 }}</td>
+                                        <td>{{ cod.quality | round(2, 'floor') }}</td>
                                         <td>{{ cod.price }}</td>
                                         <td>
                                             <button type="submit"
@@ -771,9 +781,12 @@ Dashboard | {{ config['PUBLIC_CONFIG'].site.title }}
         out_bps += stream.output_streams[i].bps;
       }
       row.eq(8).text((out_bps / (1024 * 1024 / 8)).toFixed(4));
-      row.eq(9).text((stream.timestamp - stream.start_time)/1000);
-      row.eq(10).text((stream.timestamp - stream.loop_start_time)/1000);
-      row.eq(11).text(stream.price);
+      max_work_time = (stream.timestamp - stream.start_time)
+      row.eq(9).text(max_work_time/1000);
+      loop_work_time = stream.timestamp - stream.loop_start_time
+      row.eq(10).text(loop_work_time/1000);
+      row.eq(11).text(stream.quality.toFixed(2));
+      row.eq(12).text(stream.price);
     });
     socket.on('service_data_changed_{{ service.id }}', function(service) {
       var service_id = $('#service_id');
