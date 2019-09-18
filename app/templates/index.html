@@ -51,25 +51,47 @@
                 <li>Channels on demand</li>
                 <li>HTTP Live Streaming (HLS) server-side support</li>
                 <li>
-                    Public API, client server communication via <a href="https://www.jsonrpc.org/specification">JSON RPC</a>
+                    Public API, client server communication via <a href="https://www.jsonrpc.org/specification">JSON
+                    RPC</a>
                 </li>
                 <li>Protocol gzip compression</li>
                 <li>Deep learning video analysis</li>
                 <li>Supported deep learning frameworks:</li>
                 <ul>
-                <li>Tensorflow</li>
-                <li>NCSDK</li>
-                <li>Caffe</li>
+                    <li>Tensorflow</li>
+                    <li>NCSDK</li>
+                    <li>Caffe</li>
                 </ul>
                 <li>ML Hardware:</li>
                 <ul>
-                <li>Intel Movidius Neural Compute Stick</li>
-                <li>NVIDIA Jetson</li>
+                    <li>Intel Movidius Neural Compute Stick</li>
+                    <li>NVIDIA Jetson</li>
                 </ul>
                 <li>Subscribers control</li>
-                <li><a href="https://aws.amazon.com/kinesis/video-streams">Amazon Kinesis Video Streams integration</a></li>
+                <li><a href="https://aws.amazon.com/kinesis/video-streams">Amazon Kinesis Video Streams integration</a>
+                </li>
                 <li><a href="https://hub.docker.com/r/fastogt/iptv_admin">Admin panel</a></li>
                 <li><a href="https://hub.docker.com/r/fastogt/fastocloud">Docker Image</a></li>
+            </ul>
+            <h2>Use cases:</h2>
+            <ul>
+                <li>Broadcast media content</li>
+                <li>YouTube remove AD</li>
+                <li>Insert your logo to the stream, watermark</li>
+                <li>Record/Timeshift video</li>
+                <li>Play own playlist</li>
+                <li>Mosaic, view many streams in same time on single window</li>
+                <li>Video effects in streams or files</li>
+                <li>Insert AD into stream</li>
+                <li>Subtitles to text conversions and vise versa</li>
+                <li>EPG scanning</li>
+                <li>Streams find bot, with quality analysis, test m3u file streams</li>
+                <li>Record and broadcast video from cameras</li>
+                <li>Detect objects in real-time video and send email/push notifications</li>
+                <li>Objects classification, open doors, time tracking, lock/unlock devices</li>
+                <li>Fire/Smoke detection with notifications</li>
+                <li>Livepeer mining crypto</li>
+                <li>CCTV Monitoring service</li>
             </ul>
             <h2>Machine learning video analysis:</h2>
             <video id="video" controls></video>
@@ -126,5 +148,9 @@ else if (video.canPlayType('application/vnd.apple.mpegurl'))
         video.play();
     });
 }
+
+
+
+
 </script>
 {% endblock %}
