@@ -31,7 +31,7 @@ if __name__ == '__main__':
         sys.exit(1)
 
     server = ServiceSettings.objects(id=server_id).first()
-    if server:
+    if not server:
         sys.exit(1)
 
     mydb = mysql.connector.connect(
