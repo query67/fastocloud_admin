@@ -19,12 +19,14 @@ if __name__ == '__main__':
     parser.add_argument('--mysql_user', help='MySQL username', default='')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
     parser.add_argument('--server_id', help='Server ID', default='')
+    parser.add_argument('--country', help='Country', default='US')
 
     argv = parser.parse_args()
     mysql_host = argv.mysql_host
     mysql_user = argv.mysql_user
     mysql_password = argv.mysql_password
     server_id = argv.server_id
+    country = argv.country
 
     mongo = connect(host=argv.mongo_uri)
     if not mongo:
@@ -50,8 +52,10 @@ if __name__ == '__main__':
     myresult = mycursor.fetchall()
 
     for sql_entry in myresult:
-        new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'], country='US')
+        new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
+                                                  country=country)
         new_user.add_server(server)
+        new_user.status = SubscriberUser.status.ACTIVE
         server.add_subscriber(new_user)
 
     mydb.close()
