@@ -31,12 +31,12 @@ if __name__ == '__main__':
         host=mysql_host,
         user=mysql_user,
         passwd=mysql_password,
-        database=''
+        database='xtream_iptvpro'
     )
 
     mycursor = mydb.cursor()
 
-    sql = 'SELECT username,passwords FROM users'
+    sql = 'SELECT username,passwords,exp_date,max_connections FROM users'
 
     mycursor.execute(sql)
 
