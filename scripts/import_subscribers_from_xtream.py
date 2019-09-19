@@ -34,7 +34,7 @@ if __name__ == '__main__':
         database='xtream_iptvpro'
     )
 
-    mycursor = mydb.cursor()
+    mycursor = mydb.cursor(dictionary=True)
 
     sql = 'SELECT username,password,exp_date,max_connections FROM users'
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     myresult = mycursor.fetchall()
 
     for sql_entry in myresult:
-        new_user = SubscriberUser.make_subscriber(email=sql_entry.username, password=sql_entry.password, country='US')
+        new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'], country='US')
         new_user.save()
 
     mydb.close()
