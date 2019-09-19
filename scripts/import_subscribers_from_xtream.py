@@ -54,8 +54,8 @@ if __name__ == '__main__':
     for sql_entry in myresult:
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
                                                   country=country)
-        new_user.add_server(server)
         new_user.status = SubscriberUser.Status.ACTIVE
+        new_user.add_server(server)
         server.add_subscriber(new_user)
 
     mydb.close()
