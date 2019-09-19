@@ -8,6 +8,7 @@ import mysql.connector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.common.subscriber.login.entry import SubscriberUser
+from app.service.service import ServiceSettings
 
 PROJECT_NAME = 'create_provider'
 
@@ -17,14 +18,20 @@ if __name__ == '__main__':
     parser.add_argument('--mysql_host', help='MySQL host', default='localhost')
     parser.add_argument('--mysql_user', help='MySQL username', default='')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
+    parser.add_argument('--server_id', help='Server ID', default='')
 
     argv = parser.parse_args()
     mysql_host = argv.mysql_host
     mysql_user = argv.mysql_user
     mysql_password = argv.mysql_password
+    server_id = argv.server_id
 
     mongo = connect(host=argv.mongo_uri)
     if not mongo:
+        sys.exit(1)
+
+    server = ServiceSettings.objects(id=server_id).first()
+    if server:
         sys.exit(1)
 
     mydb = mysql.connector.connect(
@@ -44,6 +51,7 @@ if __name__ == '__main__':
 
     for sql_entry in myresult:
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'], country='US')
-        new_user.save()
+        new_user.add_server(server)
+        server.add_subscriber(new_user)
 
     mydb.close()
