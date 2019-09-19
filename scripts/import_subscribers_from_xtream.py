@@ -36,7 +36,7 @@ if __name__ == '__main__':
 
     mycursor = mydb.cursor()
 
-    sql = 'SELECT username,passwords,exp_date,max_connections FROM users'
+    sql = 'SELECT username,password,exp_date,max_connections FROM users'
 
     mycursor.execute(sql)
 
