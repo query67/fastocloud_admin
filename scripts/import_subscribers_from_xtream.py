@@ -15,7 +15,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=PROJECT_NAME, usage='%(prog)s [options]')
     parser.add_argument('--mongo_uri', help='MongoDB credentials', default='mongodb://localhost:27017/iptv')
     parser.add_argument('--mysql_host', help='MySQL host', default='localhost')
-    parser.add_argument('--mysql_user', help='MySQL password', default='')
+    parser.add_argument('--mysql_user', help='MySQL username', default='')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
 
     argv = parser.parse_args()
@@ -30,9 +30,20 @@ if __name__ == '__main__':
     mydb = mysql.connector.connect(
         host=mysql_host,
         user=mysql_user,
-        passwd=mysql_user
+        passwd=mysql_password,
+        database=''
     )
 
-    for sql_entry in table:
+    mycursor = mydb.cursor()
+
+    sql = 'SELECT username,passwords FROM users'
+
+    mycursor.execute(sql)
+
+    myresult = mycursor.fetchall()
+
+    for sql_entry in myresult:
         new_user = SubscriberUser.make_subscriber(email=sql_entry.username, password=sql_entry.password, country='US')
         new_user.save()
+
+    mydb.close()
