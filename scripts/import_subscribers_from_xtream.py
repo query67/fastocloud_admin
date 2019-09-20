@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--mysql_host', help='MySQL host', default='localhost')
     parser.add_argument('--mysql_user', help='MySQL username', default='')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
+    parser.add_argument('--mysql_port', help='MySQL port', default=3306)
     parser.add_argument('--server_id', help='Server ID', default='')
     parser.add_argument('--country', help='Subscribers country', default='US')
 
@@ -27,6 +28,7 @@ if __name__ == '__main__':
     mysql_host = argv.mysql_host
     mysql_user = argv.mysql_user
     mysql_password = argv.mysql_password
+    mysql_port = argv.mysql_port
     server_id = argv.server_id
     country = argv.country
 
@@ -40,6 +42,7 @@ if __name__ == '__main__':
 
     db = mysql.connector.connect(
         host=mysql_host,
+        port=mysql_port,
         user=mysql_user,
         passwd=mysql_password,
         database='xtream_iptvpro'
