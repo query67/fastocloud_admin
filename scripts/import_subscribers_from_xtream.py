@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     mycursor = mydb.cursor(dictionary=True)
 
-    sql = 'SELECT username,password,exp_date,max_connections FROM users'
+    sql = 'SELECT username,password,created_at,exp_date,max_connections FROM users'
 
     mycursor.execute(sql)
 
@@ -55,9 +55,12 @@ if __name__ == '__main__':
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
                                                   country='US')
         new_user.status = SubscriberUser.Status.ACTIVE
-        sdate = sql_entry['exp_date']
-        if sdate:
-            new_user.exp_date = datetime.fromtimestamp(sdate)
+        created_at = sql_entry['created_at']
+        if created_at:
+            new_user.created_date = datetime.fromtimestamp(created_at)
+        exp_date = sql_entry['exp_date']
+        if exp_date:
+            new_user.exp_date = datetime.fromtimestamp(exp_date)
         dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
         new_user.add_device(dev)
         # save
