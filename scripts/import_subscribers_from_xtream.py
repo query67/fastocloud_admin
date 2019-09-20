@@ -51,8 +51,9 @@ if __name__ == '__main__':
     myresult = mycursor.fetchall()
 
     for sql_entry in myresult:
+        country = sql_entry['forced_country'] if sql_entry['forced_country'] else 'US'
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
-                                                  country=sql_entry['forced_country'])
+                                                  country=country)
         new_user.status = SubscriberUser.Status.ACTIVE
         dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
         new_user.add_device(dev)
