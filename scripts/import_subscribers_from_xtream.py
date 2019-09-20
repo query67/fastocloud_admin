@@ -44,16 +44,15 @@ if __name__ == '__main__':
 
     mycursor = mydb.cursor(dictionary=True)
 
-    sql = 'SELECT username,password,exp_date,max_connections,forced_country FROM users'
+    sql = 'SELECT username,password,exp_date,max_connections FROM users'
 
     mycursor.execute(sql)
 
     myresult = mycursor.fetchall()
 
     for sql_entry in myresult:
-        country = sql_entry['forced_country'] if sql_entry['forced_country'] else 'US'
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
-                                                  country=country)
+                                                  country='US')
         new_user.status = SubscriberUser.Status.ACTIVE
         dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
         new_user.add_device(dev)
