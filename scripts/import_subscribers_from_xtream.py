@@ -26,7 +26,6 @@ if __name__ == '__main__':
     mysql_user = argv.mysql_user
     mysql_password = argv.mysql_password
     server_id = argv.server_id
-    country = argv.country
 
     mongo = connect(host=argv.mongo_uri)
     if not mongo:
