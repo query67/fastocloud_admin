@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     mycursor = mydb.cursor(dictionary=True)
 
-    sql = 'SELECT username,password,created_at,exp_date,max_connections FROM users'
+    sql = 'SELECT username,password,created_at,exp_date FROM users'
 
     mycursor.execute(sql)
 
@@ -61,7 +61,7 @@ if __name__ == '__main__':
         exp_date = sql_entry['exp_date']
         if exp_date:
             new_user.exp_date = datetime.fromtimestamp(exp_date)
-        dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
+        dev = Device(name='Xtream')
         new_user.add_device(dev)
         # save
         new_user.add_server(server)
