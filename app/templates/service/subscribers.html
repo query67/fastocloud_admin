@@ -52,6 +52,9 @@ Activate service | {{ config['PUBLIC_CONFIG'].site.title }}
                             {{ subscriber.created_date }}
                         </td>
                         <td>
+                            {{ subscriber.exp_date }}
+                        </td>
+                        <td>
                             {{ ['NOT_ACTIVE', 'ACTIVE', 'TRIAL_FINISHED', 'BANNED'][subscriber.status] }}
                         </td>
                         <td>

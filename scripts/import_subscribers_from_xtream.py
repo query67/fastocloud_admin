@@ -2,6 +2,7 @@
 import argparse
 import os
 import sys
+from datetime import datetime
 from mongoengine import connect
 import mysql.connector
 
@@ -54,6 +55,9 @@ if __name__ == '__main__':
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
                                                   country='US')
         new_user.status = SubscriberUser.Status.ACTIVE
+        sdate = sql_entry['exp_date']
+        if sdate:
+            new_user.exp_date = datetime.fromtimestamp(sdate)
         dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
         new_user.add_device(dev)
         # save
