@@ -8,6 +8,7 @@ import mysql.connector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.common.subscriber.login.entry import SubscriberUser
+from app.common.subscriber.entry import Device
 from app.service.service import ServiceSettings
 
 PROJECT_NAME = 'create_provider'
@@ -19,7 +20,6 @@ if __name__ == '__main__':
     parser.add_argument('--mysql_user', help='MySQL username', default='')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
     parser.add_argument('--server_id', help='Server ID', default='')
-    parser.add_argument('--country', help='Country', default='US')
 
     argv = parser.parse_args()
     mysql_host = argv.mysql_host
@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     mycursor = mydb.cursor(dictionary=True)
 
-    sql = 'SELECT username,password,exp_date,max_connections FROM users'
+    sql = 'SELECT username,password,exp_date,max_connections,forced_country FROM users'
 
     mycursor.execute(sql)
 
@@ -53,8 +53,11 @@ if __name__ == '__main__':
 
     for sql_entry in myresult:
         new_user = SubscriberUser.make_subscriber(email=sql_entry['username'], password=sql_entry['password'],
-                                                  country=country)
+                                                  country=sql_entry['forced_country'])
         new_user.status = SubscriberUser.Status.ACTIVE
+        dev = Device(name='Xtream', max_connections=sql_entry['max_connections'])
+        new_user.add_device(dev)
+        # save
         new_user.add_server(server)
         server.add_subscriber(new_user)
 
