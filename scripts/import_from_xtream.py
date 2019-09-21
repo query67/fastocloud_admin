@@ -2,48 +2,16 @@
 import argparse
 import os
 import sys
-import json
 from mongoengine import connect
 import mysql.connector
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from app.common.stream.entry import ProxyStream
 from app.service.service import ServiceSettings
-from app.common.utils.utils import is_valid_http_url
-import app.common.constants as constants
+from .import_streams_from_xtream import import_streams_to_server
+from .import_subscribers_from_xtream import import_subscribers_to_server
 
 PROJECT_NAME = 'import_streams_from_xtream'
-
-
-def import_streams_to_server(db, server):
-    cursor = db.cursor(dictionary=True)
-    sql = 'SELECT stream_source, stream_display_name, stream_icon, channel_id from streams'
-    cursor.execute(sql)
-    sql_streams = cursor.fetchall()
-
-    for sql_entry in sql_streams:
-        stream = ProxyStream.make_stream(server)
-        urls = json.loads(sql_entry['stream_source'])
-        if not len(urls):
-            continue
-
-        stream.output.urls[0].uri = urls[0]
-        stream.name = sql_entry['stream_display_name']
-        tvg_logo = sql_entry['stream_icon']
-        if len(tvg_logo) < constants.MAX_URL_LENGTH:
-            if is_valid_http_url(tvg_logo, timeout=0.1):
-                stream.tvg_logo = tvg_logo
-        epg_id = sql_entry['channel_id']
-        if epg_id:
-            stream.tvg_id = epg_id
-
-        stream.save()
-        server.streams.append(stream)
-
-    server.save()
-    cursor.close()
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=PROJECT_NAME, usage='%(prog)s [options]')
@@ -65,11 +33,11 @@ if __name__ == '__main__':
     if not mongo:
         sys.exit(1)
 
-    ser = ServiceSettings.objects(id=server_id).first()
-    if not ser:
+    server = ServiceSettings.objects(id=server_id).first()
+    if not server:
         sys.exit(1)
 
-    d = mysql.connector.connect(
+    db = mysql.connector.connect(
         host=mysql_host,
         port=mysql_port,
         user=mysql_user,
@@ -77,5 +45,6 @@ if __name__ == '__main__':
         database='xtream_iptvpro'
     )
 
-    import_streams_to_server(d, ser)
-    d.close()
+    import_streams_to_server(db, server)
+    import_subscribers_to_server(db, server)
+    db.close()
