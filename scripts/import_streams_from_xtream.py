@@ -71,7 +71,7 @@ if __name__ == '__main__':
         stream.save()
         streams.append(stream)
 
-    server.add_streams(streams)
+    server.streams.append(streams)
 
     cursor.close()
     db.close()
