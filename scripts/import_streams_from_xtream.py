@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     cursor = db.cursor(dictionary=True)
 
-    sql = 'SELECT stream_source, stream_display_name, stream_icon, direct_source, epg_id from streams'
+    sql = 'SELECT stream_source, stream_display_name, stream_icon, epg_id from streams'
 
     cursor.execute(sql)
 
@@ -57,7 +57,6 @@ if __name__ == '__main__':
 
     streams = []
     for sql_entry in sql_streams:
-        #print(sql_entry)
         stream = ProxyStream.make_stream(server)
         stream.output.urls[0].uri = sql_entry['stream_source']
         stream.name = sql_entry['stream_display_name']
@@ -65,7 +64,8 @@ if __name__ == '__main__':
         if len(tvg_logo) < constants.MAX_URL_LENGTH:
             if is_valid_http_url(tvg_logo, timeout=0.1):
                 stream.tvg_logo = sql_entry['epg_id']
-        stream.tvg_id = sql_entry['epg_id']
+        if sql_entry['epg_id']:
+            stream.tvg_id = sql_entry['epg_id']
 
         stream.save()
         streams.append(stream)
