@@ -64,8 +64,9 @@ if __name__ == '__main__':
         if len(tvg_logo) < constants.MAX_URL_LENGTH:
             if is_valid_http_url(tvg_logo, timeout=0.1):
                 stream.tvg_logo = tvg_logo
-        if sql_entry['epg_id']:
-            stream.tvg_id = sql_entry['channel_id']
+        epg_id = sql_entry['channel_id']
+        if epg_id:
+            stream.tvg_id = epg_id
 
         stream.save()
         streams.append(stream)
