@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-import os
-import sys
 from datetime import datetime
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.common.subscriber.login.entry import SubscriberUser
 from app.common.subscriber.entry import Device

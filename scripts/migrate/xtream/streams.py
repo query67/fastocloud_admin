@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-import os
-import sys
 import json
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.common.stream.entry import ProxyStream
 from app.service.service import ServiceSettings
