@@ -55,7 +55,6 @@ if __name__ == '__main__':
 
     sql_streams = cursor.fetchall()
 
-    streams = []
     for sql_entry in sql_streams:
         stream = ProxyStream.make_stream(server)
         stream.output.urls[0].uri = sql_entry['stream_source']
@@ -69,9 +68,8 @@ if __name__ == '__main__':
             stream.tvg_id = epg_id
 
         stream.save()
-        streams.append(stream)
+        server.streams.append(stream)
 
-    server.streams.append(streams)
     server.save()
 
     cursor.close()
