@@ -11,7 +11,7 @@ from app.service.service import ServiceSettings
 
 PROJECT_NAME = 'import_subscribers_from_xtream'
 
-from migrate.xtream.subscribers import import_subscribers_to_server
+from .migrate.xtream.subscribers import import_subscribers_to_server
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=PROJECT_NAME, usage='%(prog)s [options]')

@@ -8,8 +8,8 @@ import mysql.connector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.service.service import ServiceSettings
-from migrate.xtream.subscribers import import_subscribers_to_server
-from migrate.xtream.streams import import_streams_to_server
+from .migrate.xtream.subscribers import import_subscribers_to_server
+from .migrate.xtream.streams import import_streams_to_server
 
 PROJECT_NAME = 'import_streams_from_xtream'
 
