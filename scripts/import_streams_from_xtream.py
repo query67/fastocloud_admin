@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=PROJECT_NAME, usage='%(prog)s [options]')
     parser.add_argument('--mongo_uri', help='MongoDB credentials', default='mongodb://localhost:27017/iptv')
     parser.add_argument('--mysql_host', help='MySQL host', default='localhost')
-    parser.add_argument('--mysql_user', help='MySQL username', default='')
+    parser.add_argument('--mysql_user', help='MySQL username', default='root')
     parser.add_argument('--mysql_password', help='MySQL password', default='')
     parser.add_argument('--mysql_port', help='MySQL port', default=3306)
     parser.add_argument('--server_id', help='Server ID', default='')
@@ -30,7 +30,6 @@ if __name__ == '__main__':
     mysql_password = argv.mysql_password
     mysql_port = argv.mysql_port
     server_id = argv.server_id
-    country = argv.country
 
     mongo = connect(host=argv.mongo_uri)
     if not mongo:
