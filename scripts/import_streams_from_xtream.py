@@ -2,7 +2,7 @@
 import argparse
 import os
 import sys
-from datetime import datetime
+import json
 from mongoengine import connect
 import mysql.connector
 
@@ -57,7 +57,11 @@ if __name__ == '__main__':
 
     for sql_entry in sql_streams:
         stream = ProxyStream.make_stream(server)
-        stream.output.urls[0].uri = sql_entry['stream_source']
+        urls = json.loads(sql_entry['stream_source'])
+        if not len(urls):
+            continue
+
+        stream.output.urls[0].uri = urls[0]
         stream.name = sql_entry['stream_display_name']
         tvg_logo = sql_entry['stream_icon']
         if len(tvg_logo) < constants.MAX_URL_LENGTH:
