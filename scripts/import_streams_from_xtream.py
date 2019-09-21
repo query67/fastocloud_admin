@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     cursor = db.cursor(dictionary=True)
 
-    sql = 'SELECT stream_source, stream_display_name, stream_icon, epg_id from streams'
+    sql = 'SELECT stream_source, stream_display_name, stream_icon, channel_id from streams'
 
     cursor.execute(sql)
 
@@ -63,9 +63,9 @@ if __name__ == '__main__':
         tvg_logo = sql_entry['stream_icon']
         if len(tvg_logo) < constants.MAX_URL_LENGTH:
             if is_valid_http_url(tvg_logo, timeout=0.1):
-                stream.tvg_logo = sql_entry['epg_id']
+                stream.tvg_logo = tvg_logo
         if sql_entry['epg_id']:
-            stream.tvg_id = sql_entry['epg_id']
+            stream.tvg_id = sql_entry['channel_id']
 
         stream.save()
         streams.append(stream)
