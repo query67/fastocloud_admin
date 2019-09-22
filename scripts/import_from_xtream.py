@@ -48,5 +48,5 @@ if __name__ == '__main__':
 
     import_streams_to_server(db, server)
     import_subscribers_to_server(db, server)
-    import_resellers_to_server(dv, server)
+    import_resellers_to_server(db, server)
     db.close()
