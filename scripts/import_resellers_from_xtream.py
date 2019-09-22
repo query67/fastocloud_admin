@@ -8,11 +8,9 @@ import mysql.connector
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from app.service.service import ServiceSettings
-from scripts.migrate.xtream.subscribers import import_subscribers_to_server
-from scripts.migrate.xtream.streams import import_streams_to_server
 from scripts.migrate.xtream.resellers import import_resellers_to_server
 
-PROJECT_NAME = 'import_streams_from_xtream'
+PROJECT_NAME = 'import_resellers_from_xtream'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog=PROJECT_NAME, usage='%(prog)s [options]')
@@ -34,11 +32,11 @@ if __name__ == '__main__':
     if not mongo:
         sys.exit(1)
 
-    server = ServiceSettings.objects(id=server_id).first()
-    if not server:
+    ser = ServiceSettings.objects(id=server_id).first()
+    if not ser:
         sys.exit(1)
 
-    db = mysql.connector.connect(
+    d = mysql.connector.connect(
         host=mysql_host,
         port=mysql_port,
         user=mysql_user,
@@ -46,7 +44,5 @@ if __name__ == '__main__':
         database='xtream_iptvpro'
     )
 
-    import_streams_to_server(db, server)
-    import_subscribers_to_server(db, server)
-    import_resellers_to_server(dv, server)
-    db.close()
+    import_resellers_to_server(d, ser)
+    d.close()

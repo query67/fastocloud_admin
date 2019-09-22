@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
 from datetime import datetime
 
 from app.common.subscriber.login.entry import SubscriberUser
 from app.common.subscriber.entry import Device
 from app.service.service import ServiceSettings
-
-PROJECT_NAME = 'import_subscribers_from_xtream'
 
 
 def import_subscribers_to_server(db, server: ServiceSettings):

@@ -1,12 +1,9 @@
-#!/usr/bin/env python3
 import json
 
 from app.common.stream.entry import ProxyStream
 from app.service.service import ServiceSettings
 from app.common.utils.utils import is_valid_http_url
 import app.common.constants as constants
-
-PROJECT_NAME = 'import_streams_from_xtream'
 
 
 def import_streams_to_server(db, server: ServiceSettings):
