@@ -68,10 +68,10 @@ def init_project(static_folder, *args):
 
     host = sn_host or _host
     port = int(sn_port or _port)
-    support_subscribers = app.config.get('SUBSCRIBERS_SUPPORT')
-    servers_manager = SubscribersServiceManager(host, port, socketio) if support_subscribers else ServiceManager(host,
-                                                                                                                 port,
-                                                                                                                 socketio)
+    native_balancer = app.config.get('INTERNAL_LOAD_BALANCER')
+    servers_manager = SubscribersServiceManager(host, port, socketio) if native_balancer else ServiceManager(host,
+                                                                                                             port,
+                                                                                                             socketio)
 
     return app, bootstrap, babel, db, mail, login_manager, servers_manager
 
