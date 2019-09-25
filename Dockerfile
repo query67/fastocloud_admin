@@ -8,5 +8,5 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-EXPOSE 8080
+EXPOSE 8080 6000
 CMD [ "python", "server.py" ]
