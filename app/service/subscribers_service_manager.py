@@ -198,7 +198,6 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             return False
 
         channels = client.info.get_streams()
-        own_channels = client.info.get_own_streams()
         return client.get_channels_success(cid, channels)
 
     def _handle_get_runtime_channel_info(self, client, cid: str, params: dict) -> bool:
