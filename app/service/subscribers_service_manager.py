@@ -107,6 +107,27 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
     def on_client_state_changed(self, client, status: ClientStatus):
         pass
 
+    def get_watchers_by_stream_id(self, sid: str):
+        total = 0
+        for user in self._subscribers:
+            if user.current_stream_id == sid:
+                total += 1
+
+        return total
+
+    def get_user_connections_by_email(self, email) -> list:
+        connections = []
+        for user in self._subscribers:
+            if user.info and user.info.email == email:
+                connections.append(user)
+
+        return connections
+
+    def send_message(self, email: str, message: PlayerMessage):
+        for user in self._subscribers:
+            if user.info and user.info.email == email:
+                user.send_message(user.gen_request_id(), message.message, message.type, message.ttl * 1000)
+
     # protected
 
     def _handle_server_ping_command(self, client, resp: Response):
@@ -177,6 +198,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             return False
 
         channels = client.info.get_streams()
+        own_channels = client.info.get_own_streams()
         return client.get_channels_success(cid, channels)
 
     def _handle_get_runtime_channel_info(self, client, cid: str, params: dict) -> bool:
@@ -188,27 +210,6 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         watchers = self.get_watchers_by_stream_id(sid)
         client.current_stream_id = sid
         return client.get_runtime_channel_info_success(cid, sid, watchers)
-
-    def get_watchers_by_stream_id(self, sid: str):
-        total = 0
-        for user in self._subscribers:
-            if user.current_stream_id == sid:
-                total += 1
-
-        return total
-
-    def get_user_connections_by_email(self, email) -> list:
-        connections = []
-        for user in self._subscribers:
-            if user.info and user.info.email == email:
-                connections.append(user)
-
-        return connections
-
-    def send_message(self, email: str, message: PlayerMessage):
-        for user in self._subscribers:
-            if user.info and user.info.email == email:
-                user.send_message(user.gen_request_id(), message.message, message.type, message.ttl * 1000)
 
     # private
     def __close_subscriber(self, subs: SubscriberConnection):
