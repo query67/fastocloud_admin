@@ -78,9 +78,9 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
                             self.__close_subscriber(client)
 
     def process_response(self, client, req: Request, resp: Response):
-        if req.method == Commands.SERVER_PING_COMMAND:
+        if req.method == Commands.SERVER_PING:
             self._handle_server_ping_command(client, resp)
-        elif req.method == Commands.SERVER_GET_CLIENT_INFO_COMMAND:
+        elif req.method == Commands.SERVER_GET_CLIENT_INFO:
             self._handle_server_get_client_info(client, resp)
 
     def process_request(self, client, req: Request):
@@ -88,24 +88,23 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             return
 
         result = False
-        if req.method == Commands.ACTIVATE_COMMAND:
-            result = self._handle_activate_subscriber(client, req.id, req.params)
-        elif req.method == Commands.GET_SERVER_INFO_COMMAND:
+        if req.method == Commands.CLIENT_ACTIVATE_DEVICE:
+            result = self._handle_activate_device(client, req.id, req.params)
+        elif req.method == Commands.CLIENT_LOGIN:
+            result = self._handle_login(client, req.id, req.params)
+        elif req.method == Commands.CLIENT_GET_SERVER_INFO:
             result = self._handle_get_server_info(client, req.id, req.params)
-        elif req.method == Commands.CLIENT_PING_COMMAND:
+        elif req.method == Commands.CLIENT_PING:
             result = self._handle_client_ping(client, req.id, req.params)
-        elif req.method == Commands.GET_CHANNELS:
+        elif req.method == Commands.CLIENT_GET_CHANNELS:
             result = self._handle_get_channels(client, req.id, req.params)
-        elif req.method == Commands.GET_RUNTIME_CHANNEL_INFO:
+        elif req.method == Commands.CLIENT_GET_RUNTIME_CHANNEL_INFO:
             result = self._handle_get_runtime_channel_info(client, req.id, req.params)
         else:
             pass
 
         if not result:
             self.__close_subscriber(client)
-
-    def on_client_state_changed(self, client, status: ClientStatus):
-        pass
 
     def get_watchers_by_stream_id(self, sid: str):
         total = 0
@@ -130,13 +129,44 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
 
     # protected
 
+    def on_client_state_changed(self, client, status: ClientStatus):
+        pass
+
     def _handle_server_ping_command(self, client, resp: Response):
         pass
 
     def _handle_server_get_client_info(self, client, resp: Response):
         pass
 
-    def _handle_activate_subscriber(self, client, cid: str, params: dict) -> bool:
+    def _handle_activate_device(self, client, cid: str, params: dict) -> bool:
+        login = params[Subscriber.EMAIL_FIELD]
+        password_hash = params[Subscriber.PASSWORD_FIELD]
+
+        check_user = Subscriber.objects(email=login, class_check=False).first()
+        if not check_user:
+            client.login_fail(cid, 'User not found')
+            return False
+
+        if check_user.status == Subscriber.Status.NOT_ACTIVE:
+            client.login_fail(cid, 'User not active')
+            return False
+
+        if check_user.status == Subscriber.Status.BANNED:
+            client.login_fail(cid, 'Banned user')
+            return False
+
+        if check_user[Subscriber.PASSWORD_FIELD] != password_hash:
+            client.login_fail(cid, 'User invalid password')
+            return False
+
+        result = client.login_success(cid, )
+        if not result:
+            return False
+        client.info = check_user
+        self.__activate_subscriber(client)
+        return True
+
+    def _handle_login(self, client, cid: str, params: dict) -> bool:
         login = params[Subscriber.EMAIL_FIELD]
         password_hash = params[Subscriber.PASSWORD_FIELD]
         device_id = params['device_id']
@@ -174,7 +204,7 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
             return False
         client.info = check_user
         client.device = found_device
-        self.__activate_subscriber(client)
+        self.__login_subscriber(client)
         return True
 
     def _handle_get_server_info(self, client, cid: str, params: dict) -> bool:
@@ -220,6 +250,9 @@ class SubscribersServiceManager(ServiceManager, IClientHandler):
         logging.info('New connection address: {0}, connections: {1}'.format(subs.address(), len(self._subscribers)))
 
     def __activate_subscriber(self, subs: SubscriberConnection):
+        logging.info('Active registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
+
+    def __login_subscriber(self, subs: SubscriberConnection):
         logging.info('Welcome registered user: {0}, connections: {1}'.format(subs.info.email, len(self._subscribers)))
 
     def __remove_subscriber(self, subs: SubscriberConnection):
