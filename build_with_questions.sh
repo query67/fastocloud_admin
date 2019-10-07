@@ -68,7 +68,7 @@ echo "We need to get you a key"
 
 sleep 10
 
-license_gen  &gt; license.key
+license_gen > license.key
 
 echo "#############################################################################"
 echo ""
