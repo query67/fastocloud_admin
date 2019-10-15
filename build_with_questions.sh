@@ -95,7 +95,7 @@ echo ""
 echo "Installing the license key"
 sleep 10
 
-/build.py release $line
+./build.py release $line
 
 done > $filename
 echo " "
