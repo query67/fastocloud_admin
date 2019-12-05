@@ -144,7 +144,7 @@ sleep 10
 
 cd ~
 
-git clone https://github.com/fastogt/fastocloud_admin
+git clone https://github.com/urgodfather/fastocloud_admin
 
 cd fastocloud_admin
 
